@@ -1,0 +1,38 @@
+# Atlas — Supabase local config. Regenerate with `supabase init` if your CLI
+# version rejects any key here. For production, create a project in the
+# ca-central-1 (Canada Central / Montréal) region per PRD §7.
+project_id = "atlas"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[storage]
+enabled = true
+file_size_limit = "500MiB"
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false  # local dev convenience; require confirmations in prod
+
+[analytics]
+enabled = false
