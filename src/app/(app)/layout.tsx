@@ -2,6 +2,7 @@ import { requireFirm } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/app/sidebar";
 import { Topbar } from "@/components/app/topbar";
+import { MobileNav } from "@/components/app/mobile-nav";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, firm } = await requireFirm();
@@ -25,9 +26,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           role={profile.role}
         />
         <main className="flex-1 overflow-y-auto scrollbar-thin">
-          <div className="mx-auto max-w-6xl px-5 py-8">{children}</div>
+          <div className="mx-auto max-w-6xl px-5 py-8 pb-24 md:pb-8">{children}</div>
         </main>
       </div>
+      <MobileNav />
     </div>
   );
 }

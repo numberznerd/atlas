@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { EmptyState } from "@/components/ui/empty-state";
 import { MeetingStatusBadge } from "@/components/status-badge";
-import { formatDate } from "@/lib/utils";
+import { formatDate, timeAgo } from "@/lib/utils";
 import type { Contact } from "@/lib/types/database";
 
 export default async function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -90,14 +90,30 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
               <CardTitle>Client brief</CardTitle>
             </CardHeader>
             <CardContent>
-              {client.notes ? (
+              {client.ai_brief ? (
+                <>
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+                    {client.ai_brief}
+                  </p>
+                  <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Sparkles className="size-3 text-accent" />
+                    Atlas memory · updated {timeAgo(client.ai_brief_updated_at)}
+                  </p>
+                </>
+              ) : client.notes ? (
                 <p className="text-sm leading-relaxed text-foreground">{client.notes}</p>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  No notes yet. As meetings are processed, this brief becomes the rolling summary a
-                  new hire can read to get up to speed on {client.name}.
+                  Atlas hasn&apos;t learned about {client.name} yet. Record or upload a meeting and
+                  this brief fills in automatically — the rolling memory a new hire can read to get
+                  up to speed.
                 </p>
               )}
+              {client.ai_brief && client.notes ? (
+                <p className="mt-3 border-t border-border pt-3 text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">Notes:</span> {client.notes}
+                </p>
+              ) : null}
               <Separator className="my-4" />
               <dl className="grid grid-cols-2 gap-4 text-sm">
                 <div>

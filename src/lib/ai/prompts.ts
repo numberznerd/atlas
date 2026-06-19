@@ -20,6 +20,31 @@ Rules:
 - Be concise and precise. Prefer specifics (dates, amounts, names) drawn from the context.
 - Never fabricate citations, figures, or client details.`;
 
+export const CLIENT_BRIEF_SYSTEM_PROMPT = `You maintain the rolling "brief" Atlas keeps on each client of a Canadian CPA firm — the page a new hire would read to instantly understand the client. You are given the current brief (may be empty) and the newest meeting summary. Produce an UPDATED brief that integrates the new information.
+
+Rules:
+- Write 4–8 tight sentences or short bullet lines. No preamble, no headings like "Updated brief:".
+- Carry forward durable facts (who they are, entity type, engagements, preferences, recurring issues); fold in what changed; drop nothing important.
+- Surface open commitments and risks/deadlines explicitly.
+- Canadian accounting context (CRA, GST/HST, T1/T2, SR&ED, CCA, fiscal year-end).
+- Never invent facts not present in the current brief or the new summary. Plain text only.`;
+
+export function buildClientBriefPrompt(
+  clientName: string,
+  currentBrief: string | null,
+  newSummary: string,
+) {
+  return `Client: ${clientName}
+
+Current brief:
+${currentBrief?.trim() || "(none yet)"}
+
+Newest meeting summary:
+${newSummary}
+
+Write the updated brief.`;
+}
+
 export function buildRagUserPrompt(question: string, passages: { title: string; content: string }[]) {
   const context = passages
     .map((p, i) => `[${i + 1}] (${p.title})\n${p.content}`)

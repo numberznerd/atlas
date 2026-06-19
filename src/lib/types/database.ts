@@ -122,10 +122,12 @@ export interface Database {
           fiscal_year_end: string | null;
           contacts: Contact[];
           notes: string | null;
+          ai_brief: string | null;
+          ai_brief_updated_at: string | null;
           is_restricted: boolean;
           created_by: string | null;
         } & Timestamps;
-        Insert: { id?: string; firm_id: string; name: string; type?: ClientType; engagement_types?: string[]; fiscal_year_end?: string | null; contacts?: Contact[]; notes?: string | null; is_restricted?: boolean; created_by?: string | null };
+        Insert: { id?: string; firm_id: string; name: string; type?: ClientType; engagement_types?: string[]; fiscal_year_end?: string | null; contacts?: Contact[]; notes?: string | null; ai_brief?: string | null; ai_brief_updated_at?: string | null; is_restricted?: boolean; created_by?: string | null };
         Update: Partial<Database["public"]["Tables"]["clients"]["Insert"]>;
         Relationships: [];
       };

@@ -21,6 +21,8 @@ export async function transcribeAudioFromUrl(audioUrl: string): Promise<Transcri
   if (!isSttConfigured()) throw new AiNotConfiguredError("Speech-to-text provider");
 
   switch (env.stt.provider) {
+    case "openai":
+      return transcribeWithOpenAI(audioUrl);
     case "deepgram":
       return transcribeWithDeepgram(audioUrl);
     case "assemblyai":
@@ -33,6 +35,57 @@ export async function transcribeAudioFromUrl(audioUrl: string): Promise<Transcri
     default:
       throw new AiNotConfiguredError(`STT provider "${env.stt.provider}"`);
   }
+}
+
+/**
+ * OpenAI Whisper (whisper-1). No speaker diarization, but it returns
+ * timestamped segments and uses the same OpenAI key as the LLM — the
+ * lowest-friction path to a working demo. Whisper caps uploads at 25MB.
+ */
+async function transcribeWithOpenAI(audioUrl: string): Promise<TranscriptionResult> {
+  const audioRes = await fetch(audioUrl);
+  if (!audioRes.ok) throw new Error("Could not download the audio for transcription.");
+  const blob = await audioRes.blob();
+
+  const form = new FormData();
+  form.append("file", blob, "audio");
+  form.append("model", "whisper-1");
+  form.append("response_format", "verbose_json");
+
+  const base = env.llm.endpoint && env.stt.provider === "openai" && env.llm.provider === "openai"
+    ? env.llm.endpoint.replace(/\/$/, "")
+    : "https://api.openai.com/v1";
+
+  const res = await fetch(`${base}/audio/transcriptions`, {
+    method: "POST",
+    headers: { authorization: `Bearer ${env.stt.apiKey}` },
+    body: form,
+  });
+  if (!res.ok) {
+    throw new Error(`OpenAI transcription failed (${res.status}): ${await res.text()}`);
+  }
+  const data = (await res.json()) as {
+    text: string;
+    language?: string;
+    segments?: { start: number; end: number; text: string }[];
+  };
+
+  const rawSegments = data.segments ?? [];
+  const segments: TranscriptSegment[] = rawSegments.length
+    ? rawSegments.map((s) => ({
+        speaker: "Speaker 1",
+        start_ms: Math.round(s.start * 1000),
+        end_ms: Math.round(s.end * 1000),
+        text: s.text.trim(),
+      }))
+    : [{ speaker: "Speaker 1", start_ms: 0, end_ms: 0, text: data.text }];
+
+  return {
+    segments,
+    language: data.language ?? "en",
+    provider: "openai-whisper",
+    wordCount: data.text.split(/\s+/).filter(Boolean).length,
+  };
 }
 
 interface DeepgramUtterance {

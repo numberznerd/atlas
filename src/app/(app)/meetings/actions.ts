@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser, logAudit } from "@/lib/auth";
 import { transcribeAudioFromUrl } from "@/lib/ai/transcription";
 import { summarizeTranscript } from "@/lib/ai/summary";
+import { updateClientBrief } from "@/lib/ai/brief";
 import { indexDocument } from "@/lib/ai/indexing";
 import { AiNotConfiguredError } from "@/lib/ai/provider";
 import { isLlmConfigured } from "@/lib/env";
@@ -258,6 +259,16 @@ async function runSummaryAndIndex(
     meetingId,
     text: summaryToText(sections),
   });
+
+  // Update the client's rolling memory — this is how Atlas "learns" over time.
+  if (clientId) {
+    try {
+      await updateClientBrief(supabase, clientId, sections);
+      await logAudit("client.memory_updated", { targetType: "client", targetId: clientId });
+    } catch {
+      // Memory refresh is best-effort; never fail the pipeline over it.
+    }
+  }
 
   await supabase.from("meetings").update({ status: "ready" }).eq("id", meetingId);
   await logAudit("meeting.summarized", { targetType: "meeting", targetId: meetingId });
