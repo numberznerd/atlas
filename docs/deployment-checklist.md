@@ -159,6 +159,8 @@ answers, that *inference* runs in the **US** — this is exactly the PRD's
 ("Canada-only") tier is a planned build, not part of this demo. Being upfront
 about this is itself part of the compliance story.
 
-*(Optional) To pin the website's compute to Montréal too: Vercel → Settings →
-Functions → Region → **Montréal (yul1)**. This is cosmetic for the demo — the
-data that matters is already in Canada via Supabase.)*
+*(Compute region: this repo includes a `vercel.json` that pins the website's
+serverless functions to **Montréal (`yul1`)** automatically, so compute runs in
+Canada too. If a deploy ever fails citing region or plan limits, delete
+`vercel.json` and redeploy — the data that matters is already in Canada via
+Supabase.)*
