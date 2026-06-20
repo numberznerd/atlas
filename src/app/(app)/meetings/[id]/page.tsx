@@ -13,6 +13,10 @@ import { MeetingProcessor } from "@/app/(app)/meetings/[id]/meeting-processor";
 import { SummaryView } from "@/app/(app)/meetings/[id]/summary-view";
 import type { SummarySections, TranscriptSegment } from "@/lib/types/database";
 
+// Transcription + summary + brief + indexing can take longer than the default
+// serverless limit; allow up to 60s (Vercel Hobby max) for the processing action.
+export const maxDuration = 60;
+
 export default async function MeetingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();

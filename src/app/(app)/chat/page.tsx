@@ -5,6 +5,9 @@ import { ChatPanel } from "@/app/(app)/chat/chat-panel";
 
 export const metadata = { title: "Ask Atlas — Atlas" };
 
+// Retrieval + LLM answer can exceed the default serverless limit on Hobby.
+export const maxDuration = 60;
+
 export default async function ChatPage({
   searchParams,
 }: {

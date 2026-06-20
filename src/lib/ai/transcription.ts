@@ -37,6 +37,30 @@ export async function transcribeAudioFromUrl(audioUrl: string): Promise<Transcri
   }
 }
 
+/** Whisper infers the audio format from the filename extension, so we must
+ * send one. Prefer the extension on the stored object; fall back to the MIME. */
+function whisperFilename(audioUrl: string, contentType: string): string {
+  try {
+    const ext = new URL(audioUrl).pathname.split(".").pop()?.toLowerCase();
+    if (ext && ext.length <= 4 && /^[a-z0-9]+$/.test(ext)) return `audio.${ext}`;
+  } catch {
+    /* fall through to MIME mapping */
+  }
+  const map: Record<string, string> = {
+    "audio/webm": "webm",
+    "audio/mp4": "m4a",
+    "audio/x-m4a": "m4a",
+    "audio/m4a": "m4a",
+    "video/mp4": "mp4",
+    "audio/mpeg": "mp3",
+    "audio/mp3": "mp3",
+    "audio/wav": "wav",
+    "audio/x-wav": "wav",
+    "audio/ogg": "ogg",
+  };
+  return `audio.${map[contentType] ?? "m4a"}`;
+}
+
 /**
  * OpenAI Whisper (whisper-1). No speaker diarization, but it returns
  * timestamped segments and uses the same OpenAI key as the LLM — the
@@ -48,7 +72,7 @@ async function transcribeWithOpenAI(audioUrl: string): Promise<TranscriptionResu
   const blob = await audioRes.blob();
 
   const form = new FormData();
-  form.append("file", blob, "audio");
+  form.append("file", blob, whisperFilename(audioUrl, blob.type));
   form.append("model", "whisper-1");
   form.append("response_format", "verbose_json");
 

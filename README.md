@@ -98,6 +98,7 @@ up your firm. (If you ran the local seed, log in with `damon@brownscpa.test` /
 `browns-demo-2026` to land in the pre-loaded **Browns CPA** demo workspace.)
 
 For a guided walkthrough with realistic data, see **[docs/demo-script.md](docs/demo-script.md)**.
+To put Atlas online for a phone/Damon demo, follow **[docs/deployment-checklist.md](docs/deployment-checklist.md)** (non-technical, ~45 min).
 
 ---
 
