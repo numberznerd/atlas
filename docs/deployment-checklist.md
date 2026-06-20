@@ -30,17 +30,17 @@ OpenAI (with ~$5 of credit). All have free tiers.
 
 ## 3. Load the schema and demo data
 
-You'll paste SQL files into Supabase's SQL editor. No coding — just copy/paste.
+You'll paste SQL into Supabase's SQL editor. No coding — just copy/paste.
 
+**Easiest (one paste):**
 1. In Supabase, open **SQL Editor** (left sidebar) → **New query**.
-2. From the repo, open the files in **`supabase/migrations/`** and run them **in
-   order, one at a time**:
-   `0001` → `0002` → `0003` → `0004` → `0005` → `0006`.
-   For each: open the file on GitHub, copy all of it, paste into the editor, click
-   **Run**. Wait for **Success** before the next one.
-3. Then open **`supabase/seed.sql`**, copy all of it, paste, and **Run**. This
-   loads Browns CPA with three clients, two meetings, an SOP, and the demo login.
+2. On GitHub, open **`supabase/demo-setup.sql`**, click **Copy raw file**, paste
+   the whole thing into the editor, and click **Run**. This creates everything —
+   schema, security, search, storage — and loads the Browns CPA demo in one shot.
    You should see a notice like *"Atlas demo ready → damon@brownscpa.test …"*.
+
+**Alternative (step by step):** run the files in `supabase/migrations/` in order
+(`0001`→`0006`), one at a time, then `supabase/seed.sql`.
 
 ✅ Check: SQL Editor → run `select name from public.firms;` — you should see
 **Browns CPA Professional Corporation**.
