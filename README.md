@@ -94,8 +94,10 @@ npm install
 npm run dev
 ```
 Open http://localhost:3000, click **Start free**, create your account, then set
-up your firm. (If you ran the local seed, log in with `demo@atlas.test` /
-`atlas-demo-1234`.)
+up your firm. (If you ran the local seed, log in with `damon@brownscpa.test` /
+`browns-demo-2026` to land in the pre-loaded **Browns CPA** demo workspace.)
+
+For a guided walkthrough with realistic data, see **[docs/demo-script.md](docs/demo-script.md)**.
 
 ---
 
@@ -124,7 +126,7 @@ automation. Inference should use **regional, no-training endpoints in Canada**.
 atlas/
 ├── supabase/
 │   ├── migrations/        # 0001 schema · 0002 RLS · 0003 search · 0004 triggers/RPCs · 0005 storage
-│   ├── seed.sql           # demo firm + clients + SOP + meeting (local dev)
+│   ├── seed.sql           # Browns CPA demo: 3 clients, 2 meetings, SOP, brain-dump
 │   └── config.toml
 └── src/
     ├── proxy.ts           # session refresh + route protection (Next 16 "proxy")
